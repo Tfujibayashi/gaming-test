@@ -1,5 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import p5 from 'p5';
+
+import { Circle } from '~/sketch';
 
 export const Root: React.FC = () => {
-  return <div>root</div>;
+  useEffect(() => {
+    new p5(Circle);
+  }, []);
+
+  return <div></div>;
 };
