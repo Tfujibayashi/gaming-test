@@ -1,12 +1,7 @@
-import React, { useEffect } from 'react';
-import p5 from 'p5';
+import React from 'react';
 
-import { Circle } from '~/sketch';
+import Routing from '~/routing';
 
 export const Root: React.FC = () => {
-  useEffect(() => {
-    new p5(Circle);
-  }, []);
-
-  return <div></div>;
+  return <Routing />;
 };
