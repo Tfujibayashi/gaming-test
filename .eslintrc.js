@@ -63,14 +63,14 @@ module.exports = {
     ],
     'simple-import-sort/exports': 'warn',
   },
-  // overrides: [
-  //   {
-  //     files: ['src/hooks/*.ts', 'src/contexts/*.ts'],
-  //     rules: {
-  //       '@typescript-eslint/explicit-function-return-type': 'off',
-  //     },
-  //   },
-  // ],
+  overrides: [
+    {
+      files: ['src/hooks/*.ts', 'src/contexts/*.ts'],
+      rules: {
+        '@typescript-eslint/explicit-function-return-type': 'off',
+      },
+    },
+  ],
   settings: {
     'import/resolver': {
       typescript: {

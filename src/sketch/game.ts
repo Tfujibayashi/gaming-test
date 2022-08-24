@@ -1,65 +1,131 @@
 import p5 from 'p5';
 
-/** Types */
-type Entity = {
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
-};
+import { Block, BlockList, Coordinate, Player } from '~/models';
 
-type Player = Entity;
+type GameState = 'PLAY' | 'GAME_OVER';
 
-export const Game = (p: p5): void => {
-  let player: Player;
+export class Game {
+  _p5!: p5;
+  player!: Player;
+  blockList!: BlockList;
+  gameState!: GameState;
 
-  p.setup = (): void => {
-    p.createCanvas(800, 600);
-    p.rectMode('center');
+  constructor(p: p5) {
+    this._p5 = p;
+  }
 
-    player = createPlayer();
+  private addBlockPair = (): void => {
+    const p = this._p5;
+
+    const y = p.random(-100, 100);
+
+    const topBlock = Block.create({
+      x: Coordinate.create(900),
+      y: Coordinate.create(y),
+      vx: Coordinate.create(-2),
+      vy: Coordinate.create(0),
+    });
+
+    const bottomBlock = Block.create({
+      x: Coordinate.create(900),
+      y: Coordinate.create(y + 600),
+      vx: Coordinate.create(-2),
+      vy: Coordinate.create(0),
+    });
+
+    this.blockList.push(topBlock);
+    this.blockList.push(bottomBlock);
   };
 
-  p.draw = (): void => {
-    // プレイヤーの位置を更新
-    updatePosition(player);
+  private isColliding = (): boolean | undefined => {
+    const p = this._p5;
+
+    for (const block of this.blockList.value) {
+      const currentXDistance = p.abs(this.player.props.x.value - block.props.x.value);
+      if (20 + 40 <= currentXDistance) return false;
+
+      const currentYDistance = p.abs(this.player.props.y.value - block.props.y.value);
+      // console.log(currentYDistance);
+      if (20 + 200 <= currentYDistance) return false;
+
+      return true;
+    }
+  };
+
+  private drawGameOverScreen = (): void => {
+    const p = this._p5;
+
+    p.background(0, 192); // 透明度 192 の黒
+    p.fill(255);
+    p.textSize(64);
+    p.textAlign(p.CENTER, p.CENTER); // 横に中央揃え ＆ 縦にも中央揃え
+    p.text('GAME OVER', p.width / 2, p.height / 2); // 画面中央にテキスト表示
+  };
+
+  reset = (): void => {
+    this.gameState = 'PLAY';
+
+    const player = Player.create({
+      x: Coordinate.create(200),
+      y: Coordinate.create(300),
+      vx: Coordinate.create(0),
+      vy: Coordinate.create(0),
+    });
+
+    this.player = player;
+    this.blockList = BlockList.empty();
+  };
+
+  update = (): void => {
+    const p = this._p5;
+
+    if (this.gameState === 'GAME_OVER') return;
+
+    // ブロックの追加
+    if (p.frameCount % 120 === 1) {
+      this.addBlockPair();
+    }
+
+    // 生きているブロックだけ残す
+    this.blockList = this.blockList.filterByX(Coordinate.create(-100));
 
     // プレイヤーに重力を適用
-    applyGravity(player);
+    this.player.applyGravity(Coordinate.create(0.15));
 
-    // プレイヤーを描画
+    // 更新
+    this.player.updatePosition();
+    this.blockList.updatePosition();
+
+    if (!this.player.isAlive) {
+      this.gameState = 'GAME_OVER';
+    }
+
+    // 衝突判定
+    if (this.isColliding()) {
+      this.gameState = 'GAME_OVER';
+    }
+  };
+
+  draw = (): void => {
+    const p = this._p5;
+
     p.background(0);
-    drawPlayer(player);
+    this.player.draw(p);
+    this.blockList.draw(p);
+
+    if (this.gameState === 'GAME_OVER') this.drawGameOverScreen();
   };
 
-  p.mousePressed = (): void => {
-    // プレイヤーをジャンプさせる
-    applyJump(player);
+  onMousePress = (): void => {
+    switch (this.gameState) {
+      case 'PLAY':
+        // プレイ中の状態ならプレイヤーをジャンプさせる
+        this.player.applyJump(-5);
+        break;
+      case 'GAME_OVER':
+        // ゲームオーバー状態ならリセット
+        this.reset();
+        break;
+    }
   };
-
-  const updatePosition = (entity: Entity): void => {
-    entity.x += entity.vx;
-    entity.y += entity.vy;
-  };
-
-  const createPlayer = (): Player => {
-    return {
-      x: 200,
-      y: 300,
-      vx: 0,
-      vy: 0,
-    };
-  };
-
-  const applyGravity = (entity: Entity): void => {
-    entity.vy += 0.15;
-  };
-
-  const applyJump = (entity: Entity): void => {
-    entity.vy = -5;
-  };
-
-  const drawPlayer = (entity: Entity): void => {
-    p.square(entity.x, entity.y, 40);
-  };
-};
+}

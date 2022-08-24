@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
-import { Battle } from '@/page';
+import { Battle } from '~/components/pages';
 
 const Routing: React.FC = () => {
   return (
