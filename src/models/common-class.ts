@@ -3,10 +3,6 @@ import { shallowEqual } from 'shallow-equal-object';
 import { EMPTY_NUMBER, EMPTY_STRING } from '~/constants';
 
 export abstract class Entity<T> {
-  get props(): Entity<T> {
-    return this;
-  }
-
   constructor(params: T) {
     Object.assign(this, params);
   }

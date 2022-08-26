@@ -17,6 +17,8 @@ export class Block extends Entity<Props> {
 
   constructor(props: Props) {
     super(props);
+
+    Object.assign(this, props);
   }
 
   static empty(): Block {

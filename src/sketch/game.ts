@@ -1,13 +1,12 @@
 import p5 from 'p5';
 
-import { Block, BlockList, Coordinate } from '~/models';
-import { PlayerSketch } from '~/models/entities/player-sketch';
+import { Block, BlockList, Coordinate, Player, PlayerName } from '~/models';
 
 type GameState = 'PLAY' | 'GAME_OVER';
 
 export class Game {
   _p5!: p5;
-  player!: PlayerSketch;
+  player!: Player;
   blockList!: BlockList;
 
   gameState!: GameState;
@@ -47,7 +46,6 @@ export class Game {
       if (20 + 40 <= currentXDistance) return false;
 
       const currentYDistance = p.abs(this.player.y.value - block.y.value);
-      // console.log(currentYDistance);
       if (20 + 200 <= currentYDistance) return false;
 
       return true;
@@ -69,11 +67,12 @@ export class Game {
   reset = (): void => {
     this.gameState = 'PLAY';
 
-    const player = new PlayerSketch({
+    const player = new Player({
       x: new Coordinate(200),
       y: new Coordinate(300),
       vx: new Coordinate(0),
       vy: new Coordinate(0),
+      name: new PlayerName('tester'),
     });
 
     this.player = player;

@@ -1,5 +1,5 @@
 import { EMPTY_STRING } from '~/constants';
-import { ValueObject } from '~/models/common-class';
+import { ValueObject } from '~/models';
 import Validator from '~/util/validator';
 
 export class PlayerName extends ValueObject<string> {
