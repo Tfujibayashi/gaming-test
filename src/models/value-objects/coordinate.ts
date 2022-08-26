@@ -1,11 +1,19 @@
 import { EMPTY_NUMBER } from '~/constants';
-import { ValueObject } from '~/models/common-class';
+import { ValueObject } from '~/models';
+import Validator from '~/util/validator';
 
 export class Coordinate extends ValueObject<number> {
-  static create(value: number): Coordinate {
+  constructor(value: number) {
     // validation
+    Coordinate.validate(value, '座標');
 
-    return new Coordinate(value);
+    super(value);
+  }
+
+  static validate(value: number, description: string): void {
+    const validator = new Validator({ value, description });
+
+    validator.number();
   }
 
   static empty(): Coordinate {

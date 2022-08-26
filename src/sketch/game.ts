@@ -1,6 +1,6 @@
 import p5 from 'p5';
 
-import { Block, BlockList, Coordinate, Player } from '~/models';
+import { Block, BlockList, Coordinate, Player, PlayerName } from '~/models';
 
 type GameState = 'PLAY' | 'GAME_OVER';
 
@@ -19,18 +19,18 @@ export class Game {
 
     const y = p.random(-100, 100);
 
-    const topBlock = Block.create({
-      x: Coordinate.create(900),
-      y: Coordinate.create(y),
-      vx: Coordinate.create(-2),
-      vy: Coordinate.create(0),
+    const topBlock = new Block({
+      x: new Coordinate(900),
+      y: new Coordinate(y),
+      vx: new Coordinate(-2),
+      vy: new Coordinate(0),
     });
 
-    const bottomBlock = Block.create({
-      x: Coordinate.create(900),
-      y: Coordinate.create(y + 600),
-      vx: Coordinate.create(-2),
-      vy: Coordinate.create(0),
+    const bottomBlock = new Block({
+      x: new Coordinate(900),
+      y: new Coordinate(y + 600),
+      vx: new Coordinate(-2),
+      vy: new Coordinate(0),
     });
 
     this.blockList.push(topBlock);
@@ -65,11 +65,12 @@ export class Game {
   reset = (): void => {
     this.gameState = 'PLAY';
 
-    const player = Player.create({
-      x: Coordinate.create(200),
-      y: Coordinate.create(300),
-      vx: Coordinate.create(0),
-      vy: Coordinate.create(0),
+    const player = new Player({
+      x: new Coordinate(200),
+      y: new Coordinate(300),
+      vx: new Coordinate(0),
+      vy: new Coordinate(0),
+      name: new PlayerName('hoge'),
     });
 
     this.player = player;
@@ -87,10 +88,10 @@ export class Game {
     }
 
     // 生きているブロックだけ残す
-    this.blockList = this.blockList.filterByX(Coordinate.create(-100));
+    this.blockList = this.blockList.filterByX(new Coordinate(-100));
 
     // プレイヤーに重力を適用
-    this.player.applyGravity(Coordinate.create(0.15));
+    this.player.applyGravity(new Coordinate(0.15));
 
     // 更新
     this.player.updatePosition();

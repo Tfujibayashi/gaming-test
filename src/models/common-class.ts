@@ -5,7 +5,7 @@ import { EMPTY_NUMBER, EMPTY_STRING } from '~/constants';
 abstract class BaseModel<T> {
   _value: T;
 
-  protected constructor(_value: T) {
+  constructor(_value: T) {
     this._value = _value;
   }
 

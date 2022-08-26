@@ -1,13 +1,13 @@
 import p5 from 'p5';
 
-import { Entity } from '~/models/common-class';
-import { Coordinate } from '~/models/value-objects';
+import { Coordinate, Entity, PlayerName } from '~/models';
 
 type Props = {
   x: Coordinate;
   y: Coordinate;
   vx: Coordinate;
   vy: Coordinate;
+  name: PlayerName;
 };
 
 export class Player extends Entity<Props> {
@@ -15,8 +15,8 @@ export class Player extends Entity<Props> {
     return this.props.y.value < 600;
   }
 
-  static create(props: Props): Player {
-    return new Player(props);
+  constructor(props: Props) {
+    super(props);
   }
 
   static empty(): Player {
@@ -25,15 +25,17 @@ export class Player extends Entity<Props> {
       y: Coordinate.empty(),
       vx: Coordinate.empty(),
       vy: Coordinate.empty(),
+      name: PlayerName.empty(),
     });
   }
 
   copy(): Player {
-    return Player.create({
+    return new Player({
       x: this.props.x.copy(),
       y: this.props.y.copy(),
       vx: this.props.vx.copy(),
       vy: this.props.vy.copy(),
+      name: this.props.name.copy(),
     });
   }
 
@@ -47,7 +49,7 @@ export class Player extends Entity<Props> {
   }
 
   applyJump = (value: number): void => {
-    this.props.vy = Coordinate.create(value);
+    this.props.vy = new Coordinate(value);
   };
 
   draw(p: p5): void {

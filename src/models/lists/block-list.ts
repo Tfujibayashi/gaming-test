@@ -1,12 +1,10 @@
 import p5 from 'p5';
 
-import { EntityList } from '~/models/common-class';
-import { Block } from '~/models/entities';
-import { Coordinate } from '~/models/value-objects';
+import { Block, Coordinate, EntityList } from '~/models';
 
 export class BlockList extends EntityList<Block, BlockList> {
-  static create(blocks: Block[] = []): BlockList {
-    return new BlockList(blocks);
+  constructor(blocks: Block[] = []) {
+    super(blocks);
   }
 
   static empty(): BlockList {
