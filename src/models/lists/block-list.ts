@@ -2,7 +2,7 @@ import p5 from 'p5';
 
 import { Block, Coordinate, EntityList } from '~/models';
 
-export class BlockList extends EntityList<Block, BlockList> {
+export class BlockList extends EntityList<Block> {
   constructor(blocks: Block[] = []) {
     super(blocks);
   }
@@ -17,7 +17,7 @@ export class BlockList extends EntityList<Block, BlockList> {
 
   filterByX(x: Coordinate): BlockList {
     const blocks = this.value.filter((item) => {
-      return item.props.x.isLarge(x);
+      return item.x.isLarge(x);
     });
 
     return new BlockList(blocks);

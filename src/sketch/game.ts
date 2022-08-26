@@ -1,13 +1,15 @@
 import p5 from 'p5';
 
-import { Block, BlockList, Coordinate, Player, PlayerName } from '~/models';
+import { Block, BlockList, Coordinate } from '~/models';
+import { PlayerSketch } from '~/models/entities/player-sketch';
 
 type GameState = 'PLAY' | 'GAME_OVER';
 
 export class Game {
   _p5!: p5;
-  player!: Player;
+  player!: PlayerSketch;
   blockList!: BlockList;
+
   gameState!: GameState;
 
   constructor(p: p5) {
@@ -41,10 +43,10 @@ export class Game {
     const p = this._p5;
 
     for (const block of this.blockList.value) {
-      const currentXDistance = p.abs(this.player.props.x.value - block.props.x.value);
+      const currentXDistance = p.abs(this.player.x.value - block.x.value);
       if (20 + 40 <= currentXDistance) return false;
 
-      const currentYDistance = p.abs(this.player.props.y.value - block.props.y.value);
+      const currentYDistance = p.abs(this.player.y.value - block.y.value);
       // console.log(currentYDistance);
       if (20 + 200 <= currentYDistance) return false;
 
@@ -62,15 +64,16 @@ export class Game {
     p.text('GAME OVER', p.width / 2, p.height / 2); // 画面中央にテキスト表示
   };
 
+  // preload = (): void => {};
+
   reset = (): void => {
     this.gameState = 'PLAY';
 
-    const player = new Player({
+    const player = new PlayerSketch({
       x: new Coordinate(200),
       y: new Coordinate(300),
       vx: new Coordinate(0),
       vy: new Coordinate(0),
-      name: new PlayerName('hoge'),
     });
 
     this.player = player;

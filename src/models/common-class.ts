@@ -2,35 +2,33 @@ import { shallowEqual } from 'shallow-equal-object';
 
 import { EMPTY_NUMBER, EMPTY_STRING } from '~/constants';
 
-abstract class BaseModel<T> {
-  _value: T;
-
-  constructor(_value: T) {
-    this._value = _value;
+export abstract class Entity<T> {
+  get props(): Entity<T> {
+    return this;
   }
 
-  isEqual(vo?: BaseModel<T>): boolean {
-    if (vo == null) {
-      return false;
-    }
-
-    return shallowEqual(this._value, vo._value);
-  }
-}
-
-export abstract class Entity<T> extends BaseModel<T> {
-  get props(): T {
-    return this._value;
+  constructor(params: T) {
+    Object.assign(this, params);
   }
 
   abstract copy(): Entity<T>;
 
   assign(props: Partial<T>): void {
-    Object.assign(this._value, props);
+    Object.assign(this, props);
+  }
+
+  isEqual(vo?: Entity<T>): boolean {
+    if (vo == null) {
+      return false;
+    }
+
+    return shallowEqual(this, vo);
   }
 }
 
-export abstract class EntityList<T, C extends EntityList<T, C>> extends BaseModel<Array<T>> {
+export abstract class EntityList<T> {
+  _value: T[];
+
   get isEmpty(): boolean {
     return this.value.length === 0;
   }
@@ -47,6 +45,10 @@ export abstract class EntityList<T, C extends EntityList<T, C>> extends BaseMode
     return this.value.length;
   }
 
+  constructor(items?: T[]) {
+    this._value = items || [];
+  }
+
   unshift(item: T): void {
     this._value = [item, ...this.value];
   }
@@ -56,7 +58,9 @@ export abstract class EntityList<T, C extends EntityList<T, C>> extends BaseMode
   }
 }
 
-export abstract class ValueObject<T extends string | number> extends BaseModel<T> {
+export abstract class ValueObject<T extends string | number> {
+  _value: T;
+
   get isEmpty(): boolean {
     if (typeof this.value === 'string') {
       return this.value === EMPTY_STRING;
@@ -71,6 +75,10 @@ export abstract class ValueObject<T extends string | number> extends BaseModel<T
 
   get value(): T {
     return this._value;
+  }
+
+  constructor(value: T) {
+    this._value = value;
   }
 
   abstract copy(): ValueObject<T>;

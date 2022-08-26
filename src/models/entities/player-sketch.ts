@@ -1,21 +1,20 @@
 import p5 from 'p5';
 
-import { Coordinate, Entity, PlayerName } from '~/models';
+import { Coordinate, Sketch } from '~/models';
 
 type Props = {
   x: Coordinate;
   y: Coordinate;
   vx: Coordinate;
   vy: Coordinate;
-  name: PlayerName;
+  // name: PlayerName;
 };
 
-export class Player extends Entity<Props> {
+export class PlayerSketch extends Sketch<Props> {
   x!: Coordinate;
   y!: Coordinate;
   vx!: Coordinate;
   vy!: Coordinate;
-  name!: PlayerName;
 
   get isAlive(): boolean {
     return this.y.value < 600;
@@ -25,29 +24,24 @@ export class Player extends Entity<Props> {
     super(props);
   }
 
-  static empty(): Player {
-    return new Player({
+  static empty(): PlayerSketch {
+    return new PlayerSketch({
       x: Coordinate.empty(),
       y: Coordinate.empty(),
       vx: Coordinate.empty(),
       vy: Coordinate.empty(),
-      name: PlayerName.empty(),
+      // name: PlayerName.empty(),
     });
   }
 
-  copy(): Player {
-    return new Player({
+  copy(): PlayerSketch {
+    return new PlayerSketch({
       x: this.x.copy(),
       y: this.y.copy(),
       vx: this.vx.copy(),
       vy: this.vy.copy(),
-      name: this.name.copy(),
+      // name: this.name.copy(),
     });
-  }
-
-  updatePosition(): void {
-    this.x.add(this.vx);
-    this.y.add(this.vy);
   }
 
   applyGravity(vy: Coordinate): void {

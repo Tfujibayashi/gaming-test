@@ -10,6 +10,11 @@ type Props = {
 };
 
 export class Block extends Entity<Props> {
+  x!: Coordinate;
+  y!: Coordinate;
+  vx!: Coordinate;
+  vy!: Coordinate;
+
   constructor(props: Props) {
     super(props);
   }
@@ -25,19 +30,19 @@ export class Block extends Entity<Props> {
 
   copy(): Block {
     return new Block({
-      x: this.props.x.copy(),
-      y: this.props.y.copy(),
-      vx: this.props.vx.copy(),
-      vy: this.props.vy.copy(),
+      x: this.x.copy(),
+      y: this.y.copy(),
+      vx: this.vx.copy(),
+      vy: this.vy.copy(),
     });
   }
 
   updatePosition(): void {
-    this.props.x.add(this.props.vx);
-    this.props.y.add(this.props.vy);
+    this.x.add(this.vx);
+    this.y.add(this.vy);
   }
 
   draw(p: p5): void {
-    p.rect(this.props.x.value, this.props.y.value, 80, 400);
+    p.rect(this.x.value, this.y.value, 80, 400);
   }
 }
