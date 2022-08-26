@@ -15,6 +15,10 @@ export class BlockList extends EntityList<Block> {
     return new BlockList(this.value);
   }
 
+  reset(): void {
+    this._value = [];
+  }
+
   filterByX(x: Coordinate): BlockList {
     const blocks = this.value.filter((item) => {
       return item.x.isLarge(x);

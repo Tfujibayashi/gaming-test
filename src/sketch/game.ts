@@ -1,18 +1,43 @@
 import p5 from 'p5';
 
-import { Block, BlockList, Coordinate, Player, PlayerName } from '~/models';
-
-type GameState = 'PLAY' | 'GAME_OVER';
+import {
+  Block,
+  BlockList,
+  Coordinate,
+  FieldSpace,
+  FieldSpaceList,
+  GameState,
+  Player,
+  PlayerName,
+} from '~/models';
 
 export class Game {
   _p5!: p5;
   player!: Player;
   blockList!: BlockList;
-
+  fieldSpaceList!: FieldSpaceList;
   gameState!: GameState;
 
   constructor(p: p5) {
+    // TODO: プレイヤー名は引数から受け取る
+    const player = new Player({
+      x: new Coordinate(200),
+      y: new Coordinate(300),
+      vx: new Coordinate(0),
+      vy: new Coordinate(0),
+      name: new PlayerName('tester'),
+    });
+
+    const fieldSpaceNum = 9;
+
+    const fieldSpaces = Array(fieldSpaceNum).map(() => {
+      return new FieldSpace({});
+    });
+
     this._p5 = p;
+    this.player = player;
+    this.blockList = BlockList.empty();
+    this.gameState = new GameState('PLAY');
   }
 
   private addBlockPair = (): void => {
@@ -65,7 +90,7 @@ export class Game {
   // preload = (): void => {};
 
   reset = (): void => {
-    this.gameState = 'PLAY';
+    this.gameState.reset();
 
     const player = new Player({
       x: new Coordinate(200),
@@ -74,15 +99,15 @@ export class Game {
       vy: new Coordinate(0),
       name: new PlayerName('tester'),
     });
-
     this.player = player;
-    this.blockList = BlockList.empty();
+
+    this.blockList.reset();
   };
 
   update = (): void => {
     const p = this._p5;
 
-    if (this.gameState === 'GAME_OVER') return;
+    if (this.gameState.isGameOver) return;
 
     // ブロックの追加
     if (p.frameCount % 120 === 1) {
@@ -100,12 +125,12 @@ export class Game {
     this.blockList.updatePosition();
 
     if (!this.player.isAlive) {
-      this.gameState = 'GAME_OVER';
+      this.gameState.isGameOver;
     }
 
     // 衝突判定
     if (this.isColliding()) {
-      this.gameState = 'GAME_OVER';
+      this.gameState.isGameOver;
     }
   };
 
@@ -116,11 +141,11 @@ export class Game {
     this.player.draw(p);
     this.blockList.draw(p);
 
-    if (this.gameState === 'GAME_OVER') this.drawGameOverScreen();
+    if (this.gameState.isGameOver) this.drawGameOverScreen();
   };
 
   onMousePress = (): void => {
-    switch (this.gameState) {
+    switch (this.gameState.value) {
       case 'PLAY':
         // プレイ中の状態ならプレイヤーをジャンプさせる
         this.player.applyJump(-5);
